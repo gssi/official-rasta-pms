@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:th="http://www.thymeleaf.org"
+      layout:decorate="~{frontoffice/layout/layout}">
+<body>
+<div layout:fragment="content">
+<script th:inline="javascript">
+    $(document).ready(async function() {
+        let long = [[${itinerary.start.longitude}]];
+        let lat = [[${itinerary.start.latitude}]];
+        map = new maplibregl.Map({
+            container: 'map',
+            style: '[(@{/maplibre/openStreetMap.json})]', // stylesheet location
+            center: [long, lat],// starting position [lng, lat]
+            zoom: 11 // starting zoom
+        });
+        start_pin = await map.loadImage('[(@{/images/start_pin.png})]');
+        end_pin = await map.loadImage('[(@{/images/end_pin.png})]');
+        map.addImage('start_pin', start_pin.data);
+        map.addImage('end_pin', end_pin.data);
+        let datageojson = JSON.parse([[${itinerary.map}]]);
+        map.addSource('route', {
+            type: 'geojson',
+            data: datageojson
+        });
+        map.addLayer({
+            'id': 'route',
+            'type': 'line',
+            'source': 'route',
+            'layout': {
+                'line-join': 'round',
+                'line-cap': 'round'
+            },
+            'paint': {
+                'line-color': '#888',
+                'line-width': 7
+            }
+        });
+        map.addLayer({
+            'id': 'start',
+            'type': 'symbol',
+            'source': 'route',
+            'layout': {
+                'icon-image': 'start_pin',
+                'icon-size': 1
+            },
+            'filter': ["all",
+                ["==", "$type", "Point"],
+                ["==", "name", "Partenza"]
+            ]
+        });
+        map.addLayer({
+            'id': 'end',
+            'type': 'symbol',
+            'source': 'route',
+            'layout': {
+                'icon-image': 'end_pin',
+                'icon-size': 1
+            },
+            'filter': ["all",
+                ["==", "$type", "Point"],
+                ["==", "name", "Arrivo"]
+            ]
+        });
+
+        map.on('click', 'start', (e) => {
+            const coordinates = e.features[0].geometry.coordinates.slice();
+            const description = e.features[0].properties.description;
+
+            // Ensure that if the map is zoomed out such that multiple
+            // copies of the feature are visible, the popup appears
+            // over the copy being pointed to.
+            while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+                coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+            }
+
+            new maplibregl.Popup()
+                .setLngLat(coordinates)
+                .setHTML(description)
+                .addTo(map);
+        });
+
+        // Change the cursor to a pointer when the mouse is over the places layer.
+        map.on('mouseenter', 'start', () => {
+            map.getCanvas().style.cursor = 'pointer';
+        });
+
+        // Change it back to a pointer when it leaves.
+        map.on('mouseleave', 'start', () => {
+            map.getCanvas().style.cursor = '';
+        });
+
+        map.on('click', 'end', (e) => {
+            const coordinates = e.features[0].geometry.coordinates.slice();
+            const description = e.features[0].properties.description;
+
+            // Ensure that if the map is zoomed out such that multiple
+            // copies of the feature are visible, the popup appears
+            // over the copy being pointed to.
+            while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+                coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+            }
+
+            new maplibregl.Popup()
+                .setLngLat(coordinates)
+                .setHTML(description)
+                .addTo(map);
+        });
+
+        // Change the cursor to a pointer when the mouse is over the places layer.
+        map.on('mouseenter', 'end', () => {
+            map.getCanvas().style.cursor = 'pointer';
+        });
+
+        // Change it back to a pointer when it leaves.
+        map.on('mouseleave', 'end', () => {
+            map.getCanvas().style.cursor = '';
+        });
+    });
+</script>
+
+<div class="card card-primary">
+    <div class="card-body">
+        <h1 th:text="${itinerary.name}"></h1>
+        <i class="fas fa-book mr-1"></i><strong th:text="#{itinerary.description}"></strong>
+        <p class="text-muted" th:utext="${itinerary.description}"></p>
+        <hr>
+        <i class="fas fa-pencil-alt mr-1"></i><strong th:text="#{itinerary.category}"></strong>
+        <ul class="list-inline">
+            <li class="badge badge-info" th:each="category: ${itinerary.categories}" th:text="${category.name}">
+            </li>
+        </ul>
+        <i class="far fa-file-alt mr-1"></i><strong th:text="#{itinerary.state}"></strong>
+        <p class="text-muted" th:text="${itinerary.state.name}"></p>
+        <i class="far fa-file-alt mr-1"></i><strong th:utext="#{itinerary.difficulty}"></strong>
+        <p class="text-muted" th:text="${itinerary.difficulty.name}"></p>
+        <i class="far fa-file-alt mr-1"></i><strong th:text="#{itinerary.length}"></strong>
+        <p class="text-muted" th:text="${itinerary.length}"></p>
+        <i class="fas fa-map-marker-alt mr-1"></i><strong th:text="#{itinerary.start}"></strong>
+        <p class="text-muted" th:text="${itinerary.start.name}"></p>
+        <i class="fas fa-map-marker-alt mr-1"></i><strong th:text="#{itinerary.end}"></strong>
+        <p class="text-muted" th:text="${itinerary.end.name}"></p>
+        <i class="fas fa-map-marker-alt mr-1"></i><strong th:text="#{itinerary.itineraryTime}"></strong>
+        <p class="text-muted" th:text="${itinerary.itineraryTime}"></p>
+
+        <div class="chart"> 
+            <div id='map' style="min-height: 250px; height: 450px; max-height: 450px; max-width: 100%;"></div>
+        </div>
+        <hr>
+        <div class="row">
+            <img style="display: block; margin: auto;  min-height: 450px; height: 550px; max-height: 650px; max-width: 100%;" th:src="@{/itineraries/getimage(id=${itinerary.id})}" th:alt="${itinerary.name}">
+        </div>
+    </div>
+</div>
+</div>
+</body>
+</html>

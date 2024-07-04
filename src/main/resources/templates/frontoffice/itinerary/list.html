@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:th="http://www.thymeleaf.org"
+      layout:decorate="~{frontoffice/layout/layout}">
+<body>
+<div layout:fragment="content">
+<script th:inline="javascript">
+    var map;
+    var start_pin;
+    var end_pin;
+    function updatemap(id, b) {
+        if (b.classList.contains("btn-dark")) {
+            b.classList.remove("btn-dark")
+            map.off('click', 'end' + id);
+            map.off('mouseenter', 'end' + id);
+            map.off('mouseleave', 'end' + id);
+            map.removeLayer('end' + id);
+            map.off('click', 'start' + id);
+            map.off('mouseenter', 'start' + id);
+            map.off('mouseleave', 'start' + id);
+            map.removeLayer('start' + id);
+            map.removeLayer('route' + id);
+            map.removeSource('route' + id);
+            map.removeImage('start_pin' + id);
+            map.removeImage('end_pin'  + id);
+        } else {
+            b.classList.add("btn-dark");
+            $.ajax({
+                url: "[(@{/itineraries/getmap})]?id=" + id,
+                type: "POST",
+                proccessData: false,
+                dataType: "JSON",
+                success: async function (json) {
+                    map.addImage('start_pin' + id, start_pin.data);
+                    map.addImage('end_pin'  + id, end_pin.data);
+                    map.addSource('route' + id, {
+                        type: 'geojson',
+                        data: json
+                    });
+                    map.addLayer({
+                        'id': 'route' + id,
+                        'type': 'line',
+                        'source': 'route' + id,
+                        'layout': {
+                            'line-join': 'round',
+                            'line-cap': 'round'
+                        },
+                        'paint': {
+                            'line-color': '#888',
+                            'line-width': 7
+                        }
+                    });
+                    map.addLayer({
+                        'id': 'start' + id,
+                        'type': 'symbol',
+                        'source': 'route' + id,
+                        'layout': {
+                            'icon-image': 'start_pin' + id,
+                            'icon-size': 1
+                        },
+                        'filter': ["all",
+                            ["==", "$type", "Point"],
+                            ["==", "name", "Partenza"]
+                        ]
+                    });
+                    map.addLayer({
+                        'id': 'end' + id,
+                        'type': 'symbol',
+                        'source': 'route' + id,
+                        'layout': {
+                            'icon-image': 'end_pin' + id,
+                            'icon-size': 1
+                        },
+                        'filter': ["all",
+                            ["==", "$type", "Point"],
+                            ["==", "name", "Arrivo"]
+                        ]
+                    });
+
+                    map.on('click', 'start' + id, (e) => {
+                        const coordinates = e.features[0].geometry.coordinates.slice();
+
+                        const description = e.features[0].properties.description+" <br> <a href='[(@{/itineraries/detail})]?id="+id+"'>Vai all'itinerario</a>";
+
+                        // Ensure that if the map is zoomed out such that multiple
+                        // copies of the feature are visible, the popup appears
+                        // over the copy being pointed to.
+                        while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+                            coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+                        }
+
+                        new maplibregl.Popup()
+                            .setLngLat(coordinates)
+                            .setHTML(description)
+                            .addTo(map);
+                    });
+
+                    // Change the cursor to a pointer when the mouse is over the places layer.
+                    map.on('mouseenter', 'start' + id, () => {
+                        map.getCanvas().style.cursor = 'pointer';
+                    });
+
+                    // Change it back to a pointer when it leaves.
+                    map.on('mouseleave', 'start' + id, () => {
+                        map.getCanvas().style.cursor = '';
+                    });
+
+                    map.on('click', 'end' + id, (e) => {
+                        const coordinates = e.features[0].geometry.coordinates.slice();
+                        const description = e.features[0].properties.description+" <br> <a href='[(@{/itineraries/detail})]?id="+id+"'>Vai all'itinerario</a>";
+
+                        // Ensure that if the map is zoomed out such that multiple
+                        // copies of the feature are visible, the popup appears
+                        // over the copy being pointed to.
+                        while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+                            coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+                        }
+
+                        new maplibregl.Popup()
+                            .setLngLat(coordinates)
+                            .setHTML(description)
+                            .addTo(map);
+                    });
+
+                    // Change the cursor to a pointer when the mouse is over the places layer.
+                    map.on('mouseenter', 'end' + id, () => {
+                        map.getCanvas().style.cursor = 'pointer';
+                    });
+
+                    // Change it back to a pointer when it leaves.
+                    map.on('mouseleave', 'end' + id, () => {
+                        map.getCanvas().style.cursor = '';
+                    });
+                },
+                error: function(xhr, status, error){
+                    var errorMessage = xhr.status + ': ' + xhr.statusText
+                    alert('Error - ' + errorMessage);
+                },
+            });
+        }
+    }
+
+    async function loadPins() {
+        start_pin = await map.loadImage('[(@{/images/start_pin.png})]');
+        end_pin = await map.loadImage('[(@{/images/end_pin.png})]');
+
+    }
+    $(document).ready(function() {
+        map = new maplibregl.Map({
+            container: 'map',
+            style: '[(@{/maplibre/openStreetMap.json})]', // stylesheet location
+            center: [13.78, 41.80],// starting position [lng, lat]
+            zoom: 11 // starting zoom
+        });
+        loadPins();
+        $('#itinerary_table').DataTable({
+            searching: true,
+            processing: false,
+            serverSide: false,
+            "columns":[
+                {"data":"code","sortable": false},
+                {"data":"name","sortable": false},
+                {"data":"start.name","sortable": false},
+                {"data":"end.name","sortable": false},
+                {"data":"difficulty.name","sortable": false},
+                { "data": "action",
+                    "searchable": false,
+                    "sortable": false,
+                    "defaultContent": ""
+                }
+            ],
+            "language": {"url": "[(@{'/i18n/datatables/'+ ${#locale.language} + '.properties'})]"},
+        });
+    });
+</script>
+<div class="row">
+    <div class="col-md-12">
+        <div class="card card-info">
+            <div class="card-header">
+                <h3 class="card-title" th:text="#{frontoffice.itineraries.title}">Rete sentieristica</h3>
+                <div class="card-tools">
+                    <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                        <i class="fas fa-minus"></i>
+                    </button>
+                    <button type="button" class="btn btn-tool" data-card-widget="remove">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="chart">
+                    <div id='map' style="min-height: 250px; height: 450px; max-height: 450px; max-width: 100%;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card card-info">
+            <div class="card-header"><h3 class="card-title" th:text="#{itineraries.title}"></h3></div>
+            <div class="card-body">
+                <div class="form-group row">
+                    <div class="col-sm-12">
+                        <table id="itinerary_table" class="table table-bordered table-striped">
+                            <thead>
+                            <tr>
+                                <th th:text="#{itinerary.code}"></th>
+                                <th th:text="#{itinerary.name}"></th>
+                                <th th:text="#{itinerary.start}"></th>
+                                <th th:text="#{itinerary.end}"></th>
+                                <th th:utext="#{itinerary.difficulty}"></th>
+                                <th th:text="#{common.action}"></th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="itinerary : ${itineraries}">
+                                <td th:text="${itinerary.code}">Codice</td>
+                                <td th:text="${itinerary.name}">Nome</td>
+                                <td th:text="${itinerary.start.name}">Nome poi inizio</td>
+                                <td th:text="${itinerary.end.name}">Nome poi fine</td>
+                                <td th:text="${itinerary.difficulty.getName()}">Difficolta</td>
+
+                                <td><button type="button" class="btn" th:onclick="|updatemap(${itinerary.id},this)|"><i class='fas fa-map'></i></button></td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+</body>
+</html>

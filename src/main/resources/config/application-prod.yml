@@ -1,0 +1,10 @@
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/rastapms
+    username: rastapms
+    password: rastapms
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  
+######################################################
+################ RoomACS PROPERTIES ##################
+######################################################

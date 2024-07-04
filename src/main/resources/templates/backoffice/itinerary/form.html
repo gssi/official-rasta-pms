@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	  xmlns:th="http://www.thymeleaf.org"
+      layout:decorate="~{backoffice/layout/layout}">
+<body>
+<div layout:fragment="content">
+<script th:inline="javascript">
+$(document).ready(function() {
+	var del = [[${currentUri.endsWith('delete')? true : false}]];
+	if (del) {
+		$(":input").prop('disabled',true);
+		$(":button").prop('disabled',false);
+		$(":input[type='hidden']").prop('disabled',false);
+	}
+
+	$('.select2bs4').select2({
+		theme: 'bootstrap4'
+	});
+
+	bsCustomFileInput.init();
+
+	$('#description').summernote();
+});
+</script>
+<div class="row">
+<div class="col-12">
+	<div class="card card-info">
+		<div class="card-header"><h3 class="card-title" th:text="#{itinerary.title}"></h3></div>
+		<form th:action="${currentUri}" th:object="${itinerary}" class="form-horizontal" method="post" enctype="multipart/form-data">
+		  	<input type="hidden" th:field="*{id}" />
+		  	<input type="hidden" th:field="*{start.id}" />
+			<input type="hidden" th:field="*{start.name}" />
+			<input type="hidden" th:field="*{start.latitude}" />
+			<input type="hidden" th:field="*{start.longitude}" />
+			<input type="hidden" th:field="*{end.id}" />
+			<input type="hidden" th:field="*{end.name}" />
+			<input type="hidden" th:field="*{end.latitude}" />
+			<input type="hidden" th:field="*{end.longitude}" />
+			<div class="card-body">
+			<div class="form-group row">
+				<label for="code" class="col-sm-2 col-form-label" th:text="#{itinerary.code}"></label>
+				<div class="col-sm-2">
+					<input type="text" th:field="*{code}" class="form-control" required maxlength="255"/>
+				</div>
+			</div>
+			<div class="form-group row">
+			  <label for="name" class="col-sm-2 col-form-label" th:text="#{itinerary.name}"></label>
+			  <div class="col-sm-6">
+				  <input type="text" th:field="*{name}" class="form-control" required maxlength="255"/>
+			  </div>
+			</div>
+			<div class="form-group row">
+			  <label for="category" class="col-sm-2 col-form-label" th:text="#{itinerary.category}"></label>
+			  <div class="col-sm-6">
+				  <select th:field="*{categories}" class="form-control select2bs4" multiple="multiple" required>
+					  <option th:each="category : ${categories}" th:value="${category.id}" th:text="#{${category.name}}">in bici</option>
+				  </select>
+			  </div>
+			</div>
+			<div class="form-group row">
+			  <label for="itineraryTime" class="col-sm-2 col-form-label" th:text="#{itinerary.itineraryTime}"></label>
+			  <div class="col-sm-2">
+				  <input type="time" th:field="*{itineraryTime}" class="form-control" required/>
+			  </div>
+			</div>
+			<div class="form-group row">
+			  <label for="length" class="col-sm-2 col-form-label" th:text="#{itinerary.length}"></label>
+			  <div class="col-sm-2">
+				  <input type="number" th:field="*{length}" min="0.0" step="0.001" class="form-control" required/>
+			  </div>
+			</div>
+			<div class="form-group row">
+			  <label for="difficulty" class="col-sm-2 col-form-label" th:utext="#{itinerary.difficulty}"></label>
+			  <div class="col-sm-2">
+				  <select th:field="*{difficulty}" class="form-control select2bs4" required>
+					  <option th:each="difficulty : ${difficulties}" th:value="${difficulty.id}" th:text="#{${difficulty.name}}">Turistico</option>
+				  </select>
+			  </div>
+			</div>
+			<div class="form-group row">
+			  <label for="state" class="col-sm-2 col-form-label" th:text="#{itinerary.state}"></label>
+			  <div class="col-sm-2">
+				  <select th:field="*{state}" class="form-control select2bs4" required>
+					  <option th:each="state : ${states}" th:value="${state.id}" th:text="#{${state.name}}">Aperto</option>
+				  </select>
+			  </div>
+			</div>
+			<div class="form-group row">
+			  <label for="description" class="col-sm-2 col-form-label" th:text="#{itinerary.description}"></label>
+			  <div class="col-sm-6">
+				  <textarea th:field="*{description}" class="form-control" required rows="3" cols="3" maxlength="4096"/>
+			  </div>
+			</div>
+			<div class="form-group row">
+			  <label class="col-sm-2 col-form-label" th:text="#{itinerary.image}"></label>
+			  <div class="col-sm-3">
+				  <div class="custom-file">
+					  <input type="file" class="custom-file-input" id="imagefile" name="imagefile" accept="image/*" >
+					  <label class="custom-file-label" for="imagefile">Seleziona file</label>
+				  </div>
+			  </div>
+			  <div class="col-sm-3">
+				<img th:if="${imageadded}" src="#" th:src="@{/backoffice/itinerary/getimage(id=${itinerary.id})}" width="320" height="240">
+			  </div>
+			</div>
+			<div class="form-group row">
+			  <label class="col-sm-2 col-form-label" th:text="#{itinerary.map}"></label>
+			  <div class="col-sm-3">
+				  <div class="custom-file">
+					  <input type="file" class="custom-file-input" id="mapfile" name="mapfile" accept="application/geo+json" th:required="${maprequired}">
+					  <label class="custom-file-label" for="map">Seleziona file</label>
+				  </div>
+			  </div>
+			  <div class="col-sm-3">
+				  <img th:if="${mapadded}" src="#" th:src="@{/images/geojson-file.svg}" width="50" height="50">
+			  </div>
+			</div>
+		  </div>
+		  <div class="card-footer">
+			  <button type="submit" class="btn btn-info" th:text="#{${currentUri.endsWith('delete')? 'common.delete' : 'common.submit'}}"></button>
+			<a href="#" th:href="@{/backoffice/itinerary/list}" class="btn btn-default float-right" th:text="#{common.cancel}"></a>
+		  </div>
+		</form>
+	</div>
+</div>
+</div>
+</div>
+</body>
+</html>

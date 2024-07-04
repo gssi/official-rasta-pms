@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:th="http://www.thymeleaf.org"
+      layout:decorate="~{frontoffice/layout/layout}">
+    <body>
+        <div layout:fragment="content">
+            <div class="card-body">
+                <div th:if="${pois.isEmpty()}">
+                    <div class="callout callout-info">
+                        <h5 th:text="#{pois.empty}"></h5>
+                    </div>
+                </div>
+                <div class="row" th:unless="${pois.isEmpty()}" >
+                    <div class="col-md-12 col-lg-6 col-xl-4" th:each="poi: ${pois}">
+                        <div class="card mb-2 bg-gradient-dark">
+                            <img th:src="@{/images/getimage(id=${poi.primaryImage.id})}" th:alt="${poi.primaryImage.name}" style="max-height: 270px; object-fit: cover;">
+                            <a href="#" th:href="@{/pois/detail(id=${poi.id})}">
+                                <div class="card-img-overlay d-flex flex-column justify-content-end">
+                                        <h5 class="card-title text-primary text-white" th:text="${poi.name}"></h5>
+                                    <p class="card-text text-white pb-2 pt-1" th:text="${poi.municipality.name}"></p>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

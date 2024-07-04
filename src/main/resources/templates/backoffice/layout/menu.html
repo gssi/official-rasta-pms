@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<body>
+<!-- Main Sidebar Container -->
+<aside class="main-sidebar sidebar-dark-primary elevation-4" th:fragment="menu">
+	<!-- Brand Logo -->
+	<a href="#" th:href="@{/backoffice/common/welcome}" class="brand-link">
+	  <img src="#" th:src="@{/dist/img/rasta-logo.png}" alt="Rasta PMS Logo" class="brand-image brand-link bg-light bg-white" style="opacity: .8">
+	  <span class="brand-text font-weight-light">Rasta PMS</span>
+	</a>
+
+  	<div class="sidebar">
+     <nav class="mt-2">
+       <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false" sec:authorize="isAuthenticated()">
+		<li class="nav-item" sec:authorize="hasRole('administrator')">
+		   <a href="#" th:href="@{/backoffice/itinerary/list}" class="nav-link">
+			   <i class="far fa-circle nav-icon"></i>
+			   <p th:text="#{menu.itinerary}"></p>
+		   </a>
+		</li>
+		<li class="nav-item" sec:authorize="hasRole('administrator')">
+			<a href="#" th:href="@{/backoffice/poi/list}" class="nav-link">
+			 <i class="far fa-circle nav-icon"></i>
+			 <p th:text="#{menu.poi}"></p>
+			</a>
+		</li>
+		<li class="nav-item" sec:authorize="hasRole('administrator')">
+		   <a href="#" th:href="@{/backoffice/user/list}" class="nav-link">
+			   <i class="far fa-circle nav-icon"></i>
+			   <p th:text="#{menu.user}"></p>
+		   </a>
+		</li>
+       </ul>
+     </nav>
+	</div>
+</aside>
+</body>
+</html>

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:th="http://www.thymeleaf.org"
+      layout:decorate="~{frontoffice/layout/layout}">
+    <body>
+        <div layout:fragment="content">
+            <script th:inline="javascript">
+                $(document).ready(function() {
+                    let long = [[${poi.longitude}]];
+                    let lat = [[${poi.latitude}]];
+                    map = new maplibregl.Map({
+                        container: 'map',
+                        style: '[(@{/maplibre/openStreetMap.json})]', // stylesheet location
+                        center: [long, lat],// starting position [lng, lat]
+                        zoom: 12 // starting zoom
+                    });
+                    const marker = new maplibregl.Marker()
+                        .setLngLat([long, lat])
+                        .addTo(map);
+                });
+            </script>
+
+            <div class="card card-primary">
+                <div class="card-body">
+                    <h1 th:text="${poi.name}"></h1>
+                    <i class="fas fa-book mr-1"></i><strong th:text="#{poi.description}"></strong>
+                    <p class="text-muted" th:utext="${poi.description}"></p>
+                    <hr>
+                    <i class="fas fa-pencil-alt mr-1"></i><strong th:text="#{itinerary.category}"></strong>
+                    <ul class="list-inline">
+                        <li class="badge badge-info" th:each="category: ${poi.categories}" th:text="${category.name}">
+                        </li>
+                    </ul>
+                    <i class="fas fa-map-marker-alt mr-1"></i><strong th:text="#{poi.municipality}"></strong>
+                    <p class="text-muted" th:text="${poi.municipality.name}"></p>
+                    <div class="chart">
+                        <div id='map' style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="col-md-12 col-lg-6 col-xl-4">
+                            <div class="card mb-2 bg-gradient-dark">
+                                <img class="card-img-top" th:src="@{/images/getimage(id=${poi.primaryImage.id})}" th:alt="${poi.primaryImage.name}">
+                            </div>
+                        </div>
+                        <div class="col-md-12 col-lg-6 col-xl-4" th:each="image: ${poi.images}">
+                            <div class="card mb-2 bg-gradient-dark">
+                                <img class="card-img-top" th:src="@{/images/getimage(id=${image.id})}" th:alt="${image.name}">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

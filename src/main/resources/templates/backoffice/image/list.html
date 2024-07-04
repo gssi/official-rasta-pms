@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:th="http://www.thymeleaf.org"
+      layout:decorate="~{backoffice/layout/layout}">
+<body>
+<div layout:fragment="content">
+    <script th:inline="javascript">
+        $(document).ready(function() {
+            $('#poi_table').DataTable({
+                "columns":[
+                    {"data":"id"},
+                    {"data":"name"},
+                    { "data": "action",
+                        "searchable": false,
+                        "sortable": false,
+                        "defaultContent": "",
+                        "render": function ( data, type, row, meta ) {
+                            return "<a href='[(@{/backoffice/image/update})]?id=" + row.id + "'><i class='fas fa-edit'></i></a>" + " | "+
+                                "<a href='[(@{/backoffice/image/delete})]?id=" + row.id + "'><i class='fas fa-trash'></i></a>";
+                        }
+                    }
+                ],
+                "ajax": {
+                    "url": "[(@{/backoffice/image/findallpaginated(poiID=${poiID})})]"
+                },
+            });
+        });
+    </script>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card card-info">
+                <div class="card-header"><h3 class="card-title" th:text="#{images.title}"></h3></div>
+                <div class="card-body">
+                    <p>
+                        <a href="#" th:href="@{/backoffice/image/create(poiID=${poiID})}" class="btn btn-app"><i class="fa fa-plus"></i>[[#{common.create}]]</a>
+                        <a href="#" th:href="@{/backoffice/poi/list}" class="btn btn-app float-right"><i class="fa fa-backward"></i>[[#{pois.title}]]</a>
+                    </p>
+                    <table id="poi_table" class="table table-bordered table-striped">
+                        <thead>
+                        <tr>
+                            <th th:text="#{common.id}"></th>
+                            <th th:text="#{image.name}"></th>
+                            <th th:text="#{common.action}"></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                        <tfoot>
+                        <tr>
+                            <th th:text="#{common.id}"></th>
+                            <th th:text="#{poi.name}"></th>
+                            <th th:text="#{common.action}"></th>
+                        </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:th="http://www.thymeleaf.org"
+      layout:decorate="~{backoffice/layout/layout}">
+<body>
+<div layout:fragment="content">
+    <script th:inline="javascript">
+        $(document).ready(function() {
+            var del = [[${currentUri.endsWith('delete')? true : false}]];
+            if (del) {
+                $(":input").prop('disabled',true);
+                $(":button").prop('disabled',false);
+                $(":input[type='hidden']").prop('disabled',false);
+
+            }
+
+            $('.select2bs4').select2({
+                theme: 'bootstrap4'
+            });
+
+            bsCustomFileInput.init();
+        });
+    </script>
+    <div class="row">
+        <div class="col-12">
+            <div class="card card-info">
+                <div class="card-header"><h3 class="card-title" th:text="#{image.title}"></h3></div>
+                <form th:action="${currentUri}" th:object="${image}" class="form-horizontal" method="post" enctype="multipart/form-data">
+                    <input type="hidden" th:field="*{id}"/>
+                    <input type="hidden" th:field="*{poi.id}"/>
+                    <div class="card-body">
+                        <div class="form-group row">
+                            <label for="name" class="col-sm-2 col-form-label" th:text="#{image.name}"></label>
+                            <div class="col-sm-6">
+                                <input type="text" th:field="*{name}" class="form-control" required maxlength="255"/>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="author" class="col-sm-2 col-form-label" th:text="#{image.author}"></label>
+                            <div class="col-sm-6">
+                                <input type="text" th:field="*{author}" class="form-control" maxlength="255"/>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-2 col-form-label" th:text="#{image.content}"></label>
+                            <div class="col-sm-3">
+                                <div class="custom-file">
+                                    <input type="file" class="custom-file-input" id="imagefile" name="imagefile" accept="image/*"  th:required="${not imageadded}">
+                                    <label class="custom-file-label" for="imagefile" th:text="#{image.imagelabel}">Seleziona immagine</label>
+                                </div>
+                            </div>
+                            <div class="col-sm-3">
+                                <img th:if="${imageadded}" src="#" th:src="@{/backoffice/image/getimage(id=${image.id})}" width="320" height="240">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <button type="submit" class="btn btn-info" th:text="#{${currentUri.endsWith('delete')? 'common.delete' : 'common.submit'}}"></button>
+                        <a href="#" th:href="@{/backoffice/image/list(poiID=${image.poi.id})}" class="btn btn-default float-right" th:text="#{common.cancel}"></a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

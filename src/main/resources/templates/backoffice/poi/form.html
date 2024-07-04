@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	  xmlns:th="http://www.thymeleaf.org"
+	  layout:decorate="~{backoffice/layout/layout}">
+<body>
+<div layout:fragment="content">
+<script th:inline="javascript">
+	$(document).ready(function() {
+		var del = [[${currentUri.endsWith('delete')? true : false}]];
+		if (del) { 
+			$(":input").prop('disabled',true);
+			$(":button").prop('disabled',false);
+			$(":input[type='hidden']").prop('disabled',false);
+
+		}
+
+		$('.select2bs4').select2({
+			theme: 'bootstrap4'
+		});
+
+		bsCustomFileInput.init();
+
+		var MEButton = function (context) {
+			var ui = $.summernote.ui;
+
+			// create button
+			var button = ui.button({
+				contents: '<span class="material-symbols-outlined">settings_applications</span>',
+				tooltip: 'Metadata Enricher',
+				click: function () {
+					let description = $('#description').html();
+					let url_rastame = "http://localhost:9090/rastame/api/metadataenricher/" + description;
+					$.ajax({url: url_rastame, success: function(result){
+							var div = $("#entity-id");
+							div.empty();
+							for(i = 0; i < result.length; i++) {
+								var entityButton = document.createElement('button');
+								var link = result[i]['link'];
+								var name = result[i]['name'];
+								$(entityButton).attr('type', 'button').addClass('btn bg-gradient-info btn-xs').append(name);
+								$(entityButton).on("click", function() {
+									const textToSearch = this.innerHTML;
+									 const description = $("#description");
+									 var divSummernote = document.getElementsByClassName('note-editable');
+									  m = divSummernote[0]; 
+								
+									 
+									 const textPlain = m.innerHTML;
+									 const textreplaced = textPlain.replaceAll(textToSearch,`<a href="${link}">${textToSearch}</a>`);
+									 description.summernote('code',	`<p>${textreplaced}</p>`);
+									
+								});
+								
+								div.append(entityButton).append("&nbsp;");
+							}
+						}
+					});
+
+				}
+			});
+			return button.render();   // return button as jquery object
+		}
+		$('#description').summernote({
+			toolbar: [
+				['style', ['style', 'bold', 'italic', 'underline', 'clear']],
+				['font', ['strikethrough', 'superscript', 'subscript']],
+				['fontname', ['fontname']],
+				['fontsize', ['fontsize']],
+				['color', ['color']],
+				['para', ['ul', 'ol', 'paragraph']],
+				['height', ['height']],
+				['mybutton', ['metadataenricher']]
+			],
+			buttons: {
+				metadataenricher: MEButton
+			}
+		});
+		$("#categoryenricher").click(function(){
+			$.ajax({url: "http://localhost:9090/rastame/api/categoriesenricher", success: function(result){
+				$("#categories").val(result).change();
+			}});
+		});
+	});
+</script>
+<div class="row">
+	<div class="col-12">
+		<div class="card card-info">
+			<div class="card-header"><h3 class="card-title" th:text="#{poi.title}"></h3></div>
+			<form th:action="${currentUri}" th:object="${poi}" class="form-horizontal" method="post" enctype="multipart/form-data">
+				<input type="hidden" th:field="*{id}"/>
+				<input type="hidden" th:field="*{primaryImage.id}"/>
+				<div class="card-body">
+					<div class="form-group row">
+						<label for="name" class="col-sm-2 col-form-label" th:text="#{poi.name}"></label>
+						<div class="col-sm-6">
+							<input type="text" th:field="*{name}" class="form-control" required maxlength="255"/>
+						</div>
+					</div>
+					<div class="form-group row">
+						<label for="description" class="col-sm-2 col-form-label" th:text="#{poi.description}"></label>
+						<div class="col-sm-6">
+							<textarea th:field="*{description}" class="form-control" required rows="3" cols="3" maxlength="4096"/>
+						</div>
+					</div>
+					<div class="form-group row">
+						<label for="entity" class="col-sm-2 col-form-label" th:utext="#{poi.entity}"></label>
+						<div class="col-sm-6" id="entity-id">
+						</div>
+					</div>
+					<div class="form-group row">
+						<label for="category" class="col-sm-2 col-form-label" th:text="#{poi.category}"></label>
+						<div class="col-sm-6">
+							<div class="input-group input-group-sm">
+								<select th:field="*{categories}" class="form-control select2bs4" multiple="multiple" required>
+									<option th:each="category : ${categories}" th:value="${category.id}" th:text="#{${category.name}}">in bici</option>
+								</select>
+								<span class="input-group-append"><button id="categoryenricher" type="button" class="btn btn-info btn-flat"><span class="input-group-append material-symbols-outlined">blur_on</span></button></span>
+							</div>
+						</div>
+					</div>
+					<div class="form-group row">
+						<label for="municipality" class="col-sm-2 col-form-label" th:text="#{poi.municipality}"></label>
+						<div class="col-sm-6">
+							<div class="input-group input-group-sm">
+								<select th:field="*{municipality}" class="form-control select2bs4" required>
+									<option th:each="municipality : ${municipalities}" th:value="${municipality.id}" th:text="#{${municipality.name}}">Pescasseroli</option>
+								</select>
+							</div>
+						</div>
+					</div>
+					<div class="form-group row">
+						<label for="latitude" class="col-sm-2 col-form-label" th:text="#{poi.latitude}"></label>
+						<div class="col-sm-2">
+							<input type="number" th:field="*{latitude}" min="0.0" step="0.0000001" class="form-control" required/>
+						</div>
+					</div>
+					<div class="form-group row">
+						<label for="longitude" class="col-sm-2 col-form-label" th:text="#{poi.longitude}"></label>
+						<div class="col-sm-2">
+							<input type="number" th:field="*{longitude}" min="0.0" step="0.0000001"class="form-control" required/>
+						</div>
+					</div>
+					<div class="form-group row">
+						<label for="altitude" class="col-sm-2 col-form-label" th:text="#{poi.altitude}"></label>
+						<div class="col-sm-2">
+							<input type="number" th:field="*{altitude}" min="0.0" step="1" class="form-control"/>
+						</div>
+					</div>
+					<div class="form-group row">
+						<label for="imagename" class="col-sm-2 col-form-label" th:text="#{poi.imagename}"></label>
+						<div class="col-sm-6">
+							<input type="text" th:field="*{primaryImage.name}" class="form-control" required maxlength="255"/>
+						</div>
+					</div>
+					<div class="form-group row">
+						<label class="col-sm-2 col-form-label" th:text="#{poi.primaryimage}"></label>
+						<div class="col-sm-3">
+							<div class="custom-file">
+								<input type="file" class="custom-file-input" id="primaryimagefile" name="primaryimagefile" accept="image/*" th:required="${not primaryimageadded}">
+								<label class="custom-file-label" for="primaryimagefile" th:text="#{poi.primaryimagelabel}">Seleziona immagine principale</label>
+							</div>
+						</div>
+						<div class="col-sm-3">
+							<img th:if="${primaryimageadded}" src="#" th:src="@{/backoffice/poi/getimage(id=${poi.id})}" width="320" height="240">
+						</div>
+					</div>
+				</div>
+				<div class="card-footer">
+					<button type="submit" class="btn btn-info" th:text="#{${currentUri.endsWith('delete')? 'common.delete' : 'common.submit'}}"></button>
+					<a href="#" th:href="@{/backoffice/poi/list}" class="btn btn-default float-right" th:text="#{common.cancel}"></a>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+</div>
+</body>
+</html>

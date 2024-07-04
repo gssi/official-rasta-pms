@@ -1,0 +1,22 @@
+server:
+  servlet:
+     context-path: /rastapms
+    
+    
+spring:
+  application:
+    name: RastaPMS
+  profiles:
+    active: dev
+  messages:
+    basename: i18n/common, i18n/rastapms
+    encoding: UTF-8
+    use-code-as-default-message: true
+  mvc:
+    format:
+      time: HH:mm
+
+######################################################
+################ RoomACS PROPERTIES ##################
+######################################################
+

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	  xmlns:th="http://www.thymeleaf.org"
+      layout:decorate="~{backoffice/layout/layout}">
+<body>
+<div layout:fragment="content">
+
+<script th:inline="javascript">
+  $(document).ready(function () {
+
+  });
+</script>
+
+<div class="row">
+<div class="col-12">
+	<div class="card card-info">
+		<div class="card-header"><h3 class="card-title" th:text="#{profile.titolo}"></h3></div>
+		<form class="form-horizontal" th:action="@{/backoffice/common/profile}" th:object="${profile}" method="post">
+		  <div class="card-body">
+	  	    <div class="input-group mb-3">
+                 <div class="input-group-prepend">
+                   <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+                 </div>
+                 <input type="email" th:field="*{email}" class="form-control" required maxlength="100">
+            </div>		  	
+	  	    <div class="input-group mb-3">
+                 <div class="input-group-prepend">
+                   <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                 </div>
+                 <input type="tel" th:field="*{password}" class="form-control" required>
+            </div>
+		  </div>
+		  <div class="card-footer">
+			<button type="submit" class="btn btn-info" th:text="#{common.submit}"></button>
+			<a href="#" th:href="@{/backoffice/common/welcome}" class="btn btn-default float-right" th:text="#{common.cancel}"></a>
+		  </div>
+		</form>
+	</div>
+</div>
+</div>
+</div>
+</body>
+</html>
