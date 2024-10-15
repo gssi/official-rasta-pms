@@ -29,7 +29,7 @@ CREATE TABLE itineraries
     length             FLOAT                 NOT NULL,
     difficulty_id      BIGINT                NOT NULL,
     itinerary_state_id BIGINT                NOT NULL,
-    map                LONGTEXT              NOT NULL,
+    map                LONGTEXT              NULL,
     image              LONGBLOB              NULL,
     CONSTRAINT pk_itineraries PRIMARY KEY (itinerary_id)
 );
@@ -77,19 +77,11 @@ CREATE TABLE municipalities
 CREATE TABLE parameters
 (
     parameter_id BIGINT AUTO_INCREMENT NOT NULL,
-    name         VARCHAR(255)          NULL,
-    type         VARCHAR(255)          NULL,
+    name         VARCHAR(255)          NOT NULL,
+    field        VARCHAR(255)          NOT NULL,
+    type         VARCHAR(255)          NOT NULL,
+    sensor_id    BIGINT                NOT NULL,
     CONSTRAINT pk_parameters PRIMARY KEY (parameter_id)
-);
-
-CREATE TABLE parameters_values
-(
-    parameter_value_id BIGINT AUTO_INCREMENT NOT NULL,
-    value              VARCHAR(255)          NULL,
-    creation_date      datetime              NULL,
-    parameter_id       BIGINT                NOT NULL,
-    sensor_id          BIGINT                NOT NULL,
-    CONSTRAINT pk_parameters_values PRIMARY KEY (parameter_value_id)
 );
 
 CREATE TABLE poi_categories
@@ -137,11 +129,13 @@ CREATE TABLE roles
 CREATE TABLE sensors
 (
     sensor_id      BIGINT AUTO_INCREMENT NOT NULL,
-    name           VARCHAR(255)          NULL,
-    ip_address     VARCHAR(255)          NULL,
+    name           VARCHAR(255)          NOT NULL,
+    topic          VARCHAR(255)          NOT NULL,
     sensor_type_id BIGINT                NOT NULL,
-    latitude       BIGINT                NULL,
-    longitude      BIGINT                NULL,
+    latitude       DOUBLE                NULL,
+    longitude      DOUBLE                NULL,
+    altitude       BIGINT                NULL,
+    poi_id         BIGINT                NOT NULL,
     CONSTRAINT pk_sensors PRIMARY KEY (sensor_id)
 );
 
@@ -152,17 +146,11 @@ CREATE TABLE sensors_parameters
     CONSTRAINT pk_sensors_parameters PRIMARY KEY (parameter_id, sensor_id)
 );
 
-CREATE TABLE sensors_parameters_values
-(
-    parameter_value_id BIGINT NOT NULL,
-    sensor_id          BIGINT NOT NULL,
-    CONSTRAINT pk_sensors_parameters_values PRIMARY KEY (parameter_value_id, sensor_id)
-);
-
 CREATE TABLE sensors_type
 (
-    sensor_id BIGINT AUTO_INCREMENT NOT NULL,
-    name      VARCHAR(255)          NULL,
+    sensor_id  BIGINT AUTO_INCREMENT NOT NULL,
+    name       VARCHAR(255)          NULL,
+    repetition INT                   NULL,
     CONSTRAINT pk_sensors_type PRIMARY KEY (sensor_id)
 );
 
@@ -195,9 +183,6 @@ ALTER TABLE regions
 ALTER TABLE roles
     ADD CONSTRAINT uc_roles_name UNIQUE (name);
 
-ALTER TABLE sensors_parameters_values
-    ADD CONSTRAINT uc_sensors_parameters_values_parameter_value UNIQUE (parameter_value_id);
-
 ALTER TABLE users
     ADD CONSTRAINT uc_users_username UNIQUE (username);
 
@@ -219,17 +204,17 @@ ALTER TABLE itineraries
 ALTER TABLE municipalities
     ADD CONSTRAINT FK_MUNICIPALITIES_ON_REGION FOREIGN KEY (region_id) REFERENCES regions (region_id);
 
-ALTER TABLE parameters_values
-    ADD CONSTRAINT FK_PARAMETERS_VALUES_ON_PARAMETER FOREIGN KEY (parameter_id) REFERENCES parameters (parameter_id);
-
-ALTER TABLE parameters_values
-    ADD CONSTRAINT FK_PARAMETERS_VALUES_ON_SENSOR FOREIGN KEY (sensor_id) REFERENCES sensors (sensor_id);
+ALTER TABLE parameters
+    ADD CONSTRAINT FK_PARAMETERS_ON_SENSOR FOREIGN KEY (sensor_id) REFERENCES sensors (sensor_id);
 
 ALTER TABLE point_of_interests
     ADD CONSTRAINT FK_POINT_OF_INTERESTS_ON_IMAGE FOREIGN KEY (image_id) REFERENCES images (image_id);
 
 ALTER TABLE point_of_interests
     ADD CONSTRAINT FK_POINT_OF_INTERESTS_ON_MUNICIPALITY FOREIGN KEY (municipality_id) REFERENCES municipalities (municipality_id);
+
+ALTER TABLE sensors
+    ADD CONSTRAINT FK_SENSORS_ON_POI FOREIGN KEY (poi_id) REFERENCES point_of_interests (poi_id);
 
 ALTER TABLE sensors
     ADD CONSTRAINT FK_SENSORS_ON_SENSOR_TYPE FOREIGN KEY (sensor_type_id) REFERENCES sensors_type (sensor_id);
@@ -252,17 +237,12 @@ ALTER TABLE sensors_parameters
 ALTER TABLE sensors_parameters
     ADD CONSTRAINT fk_senpar_on_sensor FOREIGN KEY (sensor_id) REFERENCES sensors (sensor_id);
 
-ALTER TABLE sensors_parameters_values
-    ADD CONSTRAINT fk_senparval_on_parameter_value FOREIGN KEY (parameter_value_id) REFERENCES parameters_values (parameter_value_id);
-
-ALTER TABLE sensors_parameters_values
-    ADD CONSTRAINT fk_senparval_on_sensor FOREIGN KEY (sensor_id) REFERENCES sensors (sensor_id);
-
 ALTER TABLE users_roles
     ADD CONSTRAINT fk_userol_on_role FOREIGN KEY (role_id) REFERENCES roles (role_id);
 
 ALTER TABLE users_roles
     ADD CONSTRAINT fk_userol_on_user FOREIGN KEY (user_id) REFERENCES users (user_id);
+
 
 ALTER TABLE difficulties ENGINE = InnoDB;
 ALTER TABLE regions ENGINE = InnoDB;
@@ -274,7 +254,6 @@ ALTER TABLE itinerary_states ENGINE = InnoDB;
 ALTER TABLE itineraries_categories ENGINE = InnoDB;
 ALTER TABLE itinerary_points ENGINE = InnoDB;
 ALTER TABLE `parameters` ENGINE = InnoDB;
-ALTER TABLE parameters_values ENGINE = InnoDB;
 ALTER TABLE point_of_interests ENGINE = InnoDB;
 ALTER TABLE pois_categories ENGINE = InnoDB;
 ALTER TABLE poi_categories ENGINE = InnoDB;
@@ -282,7 +261,6 @@ ALTER TABLE roles ENGINE = InnoDB;
 ALTER TABLE sensors ENGINE = InnoDB;
 ALTER TABLE sensors_type ENGINE = InnoDB;
 ALTER TABLE sensors_parameters ENGINE = InnoDB;
-ALTER TABLE sensors_parameters_values ENGINE = InnoDB;
 ALTER TABLE users ENGINE = InnoDB;
 ALTER TABLE users_roles ENGINE = InnoDB;
 
@@ -1132,3 +1110,5 @@ INSERT INTO `municipalities` (`name`, `zip_code`, `region_id`) VALUES
 ('Villa Santa Lucia', '03030', 3),
 ('Villa Santo Stefano', '03020', 3),
 ('Viticuso', '03040', 3);
+
+INSERT INTO `sensors_type` (`sensor_id`, `name`, `repetition`) VALUES (NULL, 'Metereologico', '50'), (NULL, 'Presenza', '1');

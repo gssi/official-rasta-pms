@@ -17,7 +17,8 @@ $(document).ready(function() {
 	                    "render": function ( data, type, row, meta ) {
 	                    	return "<a href='[(@{/backoffice/poi/update})]?id=" + row.id + "'><i class='fas fa-edit'></i></a>" + " | "+
 	                       		   "<a href='[(@{/backoffice/poi/delete})]?id=" + row.id + "'><i class='fas fa-trash'></i></a>"+ " | "+
-								   "<a href='[(@{/backoffice/image/list})]?poiID=" + row.id + "'><i class='fas fa-image'></i></a>";
+								   "<a href='[(@{/backoffice/image/list})]?poiID=" + row.id + "'><i class='fas fa-image'></i></a>"+ " | "+
+								   "<a href='[(@{/backoffice/sensor/list})]?poiID=" + row.id + "'><i class='fas fa-truck-loading'></i></a>";
 	                     }
 	                  }
         ],

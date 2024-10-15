@@ -16,7 +16,16 @@ spring:
     format:
       time: HH:mm
 
-######################################################
-################ RoomACS PROPERTIES ##################
-######################################################
+########################################################
+################ RASTA PMS PROPERTIES ##################
+########################################################
+rastapms:
+  influxdbURL: http://rasta.gssi.it:8086/api/v2/query
+  orgID: fbf2d6df51c7f934
+  authorizationtoken: QBmhrJfmainhMOuh3T4S7i5UavyIGQif8xgRkFqScXnuuxZPep7NAwBg1_rQAGrTslOeYx4bJFkpHQ5uK-Bbbg==
+  bucket: RASTA
+  host: rasta
+  medescription: http://localhost:9090/rastame/api/metadataenricher/description
+  mecategories: http://localhost:9090/rastame/api/metadataenricher/categories
+
 

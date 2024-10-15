@@ -13,6 +13,9 @@ public class SensorType {
     @Column(name = "name")
     private String name;
 
+    @Column(name = "repetition")
+    private int repetition;
+
     public Long getId() {
         return id;
     }
@@ -27,5 +30,13 @@ public class SensorType {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public int getRepetition() {
+        return repetition;
+    }
+
+    public void setRepetition(int repetition) {
+        this.repetition = repetition;
     }
 }

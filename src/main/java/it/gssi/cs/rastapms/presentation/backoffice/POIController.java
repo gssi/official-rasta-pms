@@ -49,7 +49,8 @@ public class POIController {
     }
 
     @PostMapping("/create")
-    public String create(@ModelAttribute("poi") POI poi, @RequestParam("primaryimagefile") MultipartFile primaryImageFile) throws BusinessException, IOException {
+    public String create(@ModelAttribute("poi") POI poi, @RequestParam("categoriesadded") String categoriesadded, @RequestParam("primaryimagefile") MultipartFile primaryImageFile) throws BusinessException, IOException {
+        createPOICategories(poi, categoriesadded);
         poi.getPrimaryImage().setContent(primaryImageFile.getBytes());
         poi.getPrimaryImage().setType(primaryImageFile.getContentType());
         poiService.createPointOfInterest(poi);
@@ -65,7 +66,8 @@ public class POIController {
     }
 
     @PostMapping("/update")
-    public String update(@ModelAttribute("poi") POI poi, @RequestParam("primaryimagefile") MultipartFile primaryimagefile) throws BusinessException, IOException {
+    public String update(@ModelAttribute("poi") POI poi, @RequestParam("categoriesadded") String categoriesadded, @RequestParam("primaryimagefile") MultipartFile primaryimagefile) throws BusinessException, IOException {
+        createPOICategories(poi, categoriesadded);
         if (primaryimagefile.getBytes().length == 0) {
             POI oldPoi = poiService.findPointOfInterestByID(poi.getId());
             poi.getPrimaryImage().setContent(oldPoi.getPrimaryImage().getContent());
@@ -117,5 +119,16 @@ public class POIController {
         model.addAttribute("municipalities", municipalities);
 
 
+    }
+
+    private void createPOICategories(POI poi, String categoriesadded) throws BusinessException {
+        if (!"".equals(categoriesadded)) {
+            for (String category: categoriesadded.split(",")) {
+                POICategory poiCategory = new POICategory();
+                poiCategory.setName(category);
+                POICategory newPoiCategory = poiService.createPOICategory(poiCategory);
+                poi.getCategories().add(newPoiCategory);
+            }
+        }
     }
 }

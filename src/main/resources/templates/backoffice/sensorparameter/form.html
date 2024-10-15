@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:th="http://www.thymeleaf.org"
+      layout:decorate="~{backoffice/layout/layout}">
+<body>
+<div layout:fragment="content">
+    <script th:inline="javascript">
+        $(document).ready(function() {
+            var del = [[${currentUri.endsWith('delete')? true : false}]];
+            if (del) {
+                $(":input").prop('disabled',true);
+                $(":button").prop('disabled',false);
+                $(":input[type='hidden']").prop('disabled',false);
+            }
+
+            $('.select2bs4').select2({
+                theme: 'bootstrap4'
+            });
+        });
+    </script>
+    <div class="row">
+        <div class="col-12">
+            <div class="card card-info">
+                <div class="card-header"><h3 class="card-title" th:text="#{parameter.title}"></h3></div>
+                <form th:action="${currentUri}" th:object="${parameter}" class="form-horizontal" method="post">
+                    <input type="hidden" th:field="*{id}"/>
+                    <input type="hidden" th:field="*{sensor.id}"/>
+                    <div class="card-body">
+                        <div class="form-group row">
+                            <label for="sensorname" class="col-sm-2 col-form-label" th:text="#{parameter.sensor.name}"></label>
+                            <div class="col-sm-6">
+                                <input type="text" th:field="*{sensor.name}" class="form-control" disabled/>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="name" class="col-sm-2 col-form-label" th:text="#{parameter.name}"></label>
+                            <div class="col-sm-6">
+                                <input type="text" th:field="*{name}" class="form-control" required maxlength="255"/>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="field" class="col-sm-2 col-form-label" th:text="#{parameter.field}"></label>
+                            <div class="col-sm-6">
+                                <input type="text" th:field="*{field}" class="form-control" required maxlength="255"/>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="type" class="col-sm-2 col-form-label" th:text="#{parameter.type}"></label>
+                            <div class="col-sm-6">
+                                <div class="input-group input-group-sm">
+                                    <select th:field="*{type}" class="form-control select2bs4" required>
+                                        <option th:each="type : ${types}" th:value="${type.name}" th:text="#{${type.name}}">String</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-footer">
+                        <button type="submit" class="btn btn-info" th:text="#{${currentUri.endsWith('delete')? 'common.delete' : 'common.submit'}}"></button>
+                        <a href="#" th:href="@{/backoffice/sensorparameter/list(sensorID=${parameter.sensor.id})}" class="btn btn-default float-right" th:text="#{common.cancel}"></a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

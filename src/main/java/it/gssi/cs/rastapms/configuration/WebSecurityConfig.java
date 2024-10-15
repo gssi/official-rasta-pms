@@ -20,7 +20,7 @@ public class WebSecurityConfig {
 		http.authorizeHttpRequests((authorize) -> authorize.requestMatchers("/", "/index", "/loginform").anonymous()
 				.requestMatchers("/i18n/**", "/dist/**", "/plugins/**", "/favicon.ico", "/maplibre/**", "/images/**", "/itineraries/**", "/pois/**").permitAll()
 				.requestMatchers("/backoffice/common/**").authenticated()
-				.requestMatchers("/backoffice/poi/**", "/backoffice/image/**", "/backoffice/itinerary/**", "/backoffice/user/**").hasAnyRole("administrator"))
+				.requestMatchers("/backoffice/poi/**", "/backoffice/image/**", "/backoffice/itinerary/**", "/backoffice/user/**", "/backoffice/sensor/**", "/backoffice/sensorparameter/**").hasAnyRole("administrator"))
 				.formLogin((form) -> form.loginPage("/loginform").loginProcessingUrl("/login")
 					.failureUrl("/loginform?error=invalidlogin").defaultSuccessUrl("/backoffice/common/welcome", false))
 					.logout((logout) -> logout.logoutUrl("/backoffice/logout"))

@@ -31,7 +31,7 @@ public class PublicPOIController {
 
     @GetMapping("/detail")
     public String poiDetail(Model model, @RequestParam("id") Long id) throws BusinessException {
-        POI poi = poiService.findPointOfInterestByID(id);
+        POI poi = poiService.findPointOfInterestByIDWithAugmentedDescription(id);
         model.addAttribute("poi", poi);
         return "/frontoffice/poi/detail";
     }
