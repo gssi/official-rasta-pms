@@ -1,6 +1,7 @@
 package it.gssi.cs.rastapms.presentation.api;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import it.gssi.cs.rastapms.business.BusinessException;
 import it.gssi.cs.rastapms.business.ItineraryService;
 import it.gssi.cs.rastapms.domain.*;
@@ -14,6 +15,7 @@ import java.util.List;
 import java.util.Set;
 
 
+@Tag(name = "Itinerary")
 @RestController
 @RequestMapping(value = "/api/v1/itineraries")
 public class RESTItineraryController {

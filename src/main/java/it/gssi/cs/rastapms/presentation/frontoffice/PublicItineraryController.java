@@ -1,5 +1,6 @@
 package it.gssi.cs.rastapms.presentation.frontoffice;
 
+import io.swagger.v3.oas.annotations.Hidden;
 import it.gssi.cs.rastapms.business.BusinessException;
 import it.gssi.cs.rastapms.business.ItineraryService;
 import it.gssi.cs.rastapms.business.RequestGrid;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Hidden
 @Controller
 @RequestMapping("itineraries")
 public class PublicItineraryController {
@@ -28,7 +30,7 @@ public class PublicItineraryController {
     public String list(Model model) throws BusinessException {
         List<Itinerary> itineraries = itineraryService.findAllItineraries();
         model.addAttribute("itineraries", itineraries);
-        return "/frontoffice/itinerary/list";
+        return "frontoffice/itinerary/list";
     }
 
     @PostMapping("/findallpaginated")

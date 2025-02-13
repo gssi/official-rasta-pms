@@ -17,11 +17,11 @@ public class WebConfig implements WebMvcConfigurer {
 
 	@Override
 	public void addViewControllers(ViewControllerRegistry registry) {
-		registry.addViewController("/index").setViewName("/index");
-		registry.addViewController("/loginform").setViewName("/login-form");
-		registry.addViewController("/backoffice/common/welcome").setViewName("/backoffice/common/welcome");
-		registry.addViewController("/backoffice/common/operazioneok").setViewName("/backoffice/common/operazioneok");
-		registry.addViewController("/backoffice/common/accessdenied").setViewName("/backoffice/common/accessdenied");
+		registry.addViewController("/index").setViewName("index");
+		registry.addViewController("/loginform").setViewName("login-form");
+		registry.addViewController("/backoffice/common/welcome").setViewName("backoffice/common/welcome");
+		registry.addViewController("/backoffice/common/operazioneok").setViewName("backoffice/common/operazioneok");
+		registry.addViewController("/backoffice/common/accessdenied").setViewName("backoffice/common/accessdenied");
 
 	}
 

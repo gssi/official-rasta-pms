@@ -2,6 +2,7 @@ package it.gssi.cs.rastapms.presentation.backoffice;
 
 
 import com.fasterxml.jackson.annotation.JsonView;
+import io.swagger.v3.oas.annotations.Hidden;
 import it.gssi.cs.rastapms.business.BusinessException;
 import it.gssi.cs.rastapms.business.ItineraryService;
 import it.gssi.cs.rastapms.business.RequestGrid;
@@ -17,6 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.List;
 
+@Hidden
 @Controller
 @RequestMapping("backoffice/itinerary")
 public class ItineraryController {
@@ -29,7 +31,7 @@ public class ItineraryController {
 
     @GetMapping("/list")
     public String list() {
-        return "/backoffice/itinerary/list";
+        return "backoffice/itinerary/list";
     }
 
     @JsonView(Views.ItineraryPrivate.class)
@@ -44,7 +46,7 @@ public class ItineraryController {
         model.addAttribute("itinerary", itinerary);
 
         model.addAttribute("maprequired", true);
-        return "/backoffice/itinerary/form";
+        return "backoffice/itinerary/form";
     }
 
     @PostMapping("/create")
@@ -62,7 +64,7 @@ public class ItineraryController {
         model.addAttribute("maprequired", ((itinerary.getMap() == null) ? true : itinerary.getMap().length() == 0));
         model.addAttribute("mapadded", ((itinerary.getMap() == null) ? false : itinerary.getMap().length() != 0));
         model.addAttribute("imageadded", ((itinerary.getImage() == null) ? false : itinerary.getImage().length != 0));
-        return "/backoffice/itinerary/form";
+        return "backoffice/itinerary/form";
     }
 
     @PostMapping("/update")
@@ -92,7 +94,7 @@ public class ItineraryController {
     public String deleteStart(@RequestParam("id") Long id, Model model) throws BusinessException {
         Itinerary itinerary = itineraryService.findItineraryByID(id);
         model.addAttribute("itinerary", itinerary);
-        return "/backoffice/itinerary/form";
+        return "backoffice/itinerary/form";
     }
 
     @PostMapping("/delete")

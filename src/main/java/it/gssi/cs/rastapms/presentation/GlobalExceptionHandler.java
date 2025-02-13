@@ -24,7 +24,7 @@ public class GlobalExceptionHandler {
 		String message = (ex.getCause() == null) ? "" : ex.getCause().getMessage();
 		model.addAttribute("errorCause", message);
 		model.addAttribute("errorMessage", stringWriter.toString());
-		return "/backoffice/common/error";
+		return "backoffice/common/error";
 	}
 
 }

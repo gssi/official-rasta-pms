@@ -1,5 +1,6 @@
 package it.gssi.cs.rastapms.presentation.backoffice;
 
+import io.swagger.v3.oas.annotations.Hidden;
 import it.gssi.cs.rastapms.domain.User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import it.gssi.cs.rastapms.business.BusinessException;
 import it.gssi.cs.rastapms.business.UserService;
 
+@Hidden
 @Controller
 @RequestMapping("backoffice/common/profile")
 public class ProfileController {
@@ -27,7 +29,7 @@ public class ProfileController {
 		User newUser = userService.findUserByUsername(user.getUsername());
 		model.addAttribute("profile", newUser);
 
-		return "/backoffice/common/profile";
+		return "backoffice/common/profile";
 
 	}
 

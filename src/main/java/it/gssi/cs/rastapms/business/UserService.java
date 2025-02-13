@@ -17,4 +17,6 @@ public interface UserService {
 	Role findRoleByName(String name) throws BusinessException;
 
     User findUserByID(Long id) throws BusinessException;
+
+    void deleteUser(User user) throws BusinessException;
 }

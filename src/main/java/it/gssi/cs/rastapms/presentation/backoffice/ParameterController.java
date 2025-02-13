@@ -1,5 +1,6 @@
 package it.gssi.cs.rastapms.presentation.backoffice;
 
+import io.swagger.v3.oas.annotations.Hidden;
 import it.gssi.cs.rastapms.business.BusinessException;
 import it.gssi.cs.rastapms.business.POIService;
 import it.gssi.cs.rastapms.business.RequestGrid;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Hidden
 @Controller
 @RequestMapping("backoffice/sensorparameter")
 public class ParameterController {
@@ -28,7 +30,7 @@ public class ParameterController {
     public String list(@RequestParam("sensorID") Long sensorID, Model model) throws BusinessException {
         Sensor sensor = poiService.findSensorByID(sensorID);
         model.addAttribute("sensor", sensor);
-        return "/backoffice/sensorparameter/list";
+        return "backoffice/sensorparameter/list";
     }
 
     //@JsonView(Views.POIPrivate.class)
@@ -44,7 +46,7 @@ public class ParameterController {
         Parameter parameter = new Parameter();
         parameter.setSensor(sensor);
         model.addAttribute("parameter", parameter);
-        return "/backoffice/sensorparameter/form";
+        return "backoffice/sensorparameter/form";
     }
 
     @PostMapping("/create")
@@ -57,7 +59,7 @@ public class ParameterController {
     public String updateStart(@RequestParam Long id, Model model) throws BusinessException {
         Parameter parameter = poiService.findParameterByID(id);
         model.addAttribute("parameter", parameter);
-        return "/backoffice/sensorparameter/form";
+        return "backoffice/sensorparameter/form";
     }
 
     @PostMapping("/update")
@@ -70,7 +72,7 @@ public class ParameterController {
     public String deleteStart(@RequestParam Long id, Model model) throws BusinessException {
         Parameter parameter = poiService.findParameterByID(id);
         model.addAttribute("parameter", parameter);
-        return "/backoffice/sensorparameter/form";
+        return "backoffice/sensorparameter/form";
     }
 
     @PostMapping("/delete")

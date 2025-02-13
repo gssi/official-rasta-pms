@@ -2,8 +2,8 @@
 
 This document gives the instructions to install the Rasta PMS, i.e., the POI managament system.
 
-
-## System Requirements
+## Local installation
+### System Requirements
 The software requirements can be summarized as:
 
 * Microsoft Windows, Mac OS X or Unix Operating Systems and derived are supported
@@ -11,7 +11,7 @@ The software requirements can be summarized as:
 * Latest [Apache Maven](https://maven.apache.org/) installed.
 * A MySQL installed. For Mac OS or Windows, the [MAMP](https://www.mamp.info/) product contains MySQL.
 
-## Create a MySQL Database
+### Create a MySQL Database
 Create a user and a database with the following data:
 ```
 username= rastapms
@@ -43,3 +43,19 @@ To launch the Rasta PMS application, run these maven commands that will start th
     ```
     http://localhost:8080/rastapms/
     ```
+## Docker installation
+### System Requirements
+Docker has to be installed to your machine
+
+### Start Rasta PMS application
+To launch the Rasta PMS application, run this docker command that will create a container containing a MySQL installation and the Rasta PMS application on the port `8080`:
+1. Open a terminal in the directory where you downloaded the source code and type the following command:
+
+    ```
+    docker compose up
+    ```
+2. Open a browser and type the following URL.
+
+
+    ```
+    http://localhost:8080/rastapms/

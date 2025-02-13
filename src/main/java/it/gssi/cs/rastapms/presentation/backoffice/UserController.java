@@ -1,5 +1,6 @@
 package it.gssi.cs.rastapms.presentation.backoffice;
 
+import io.swagger.v3.oas.annotations.Hidden;
 import it.gssi.cs.rastapms.business.BusinessException;
 import it.gssi.cs.rastapms.business.RequestGrid;
 import it.gssi.cs.rastapms.business.ResponseGrid;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 
+@Hidden
 @Controller
 @RequestMapping("backoffice/user")
 public class UserController {
@@ -28,7 +30,7 @@ public class UserController {
 
     @GetMapping("/list")
     public String list() {
-        return "/backoffice/user/list";
+        return "backoffice/user/list";
     }
 
     @PostMapping("/findallpaginated")
@@ -40,7 +42,7 @@ public class UserController {
     public String createStart(Model model) {
         User user = new User();
         model.addAttribute("user", user);
-        return "/backoffice/user/form";
+        return "backoffice/user/form";
     }
 
     @PostMapping("/create")
@@ -58,7 +60,7 @@ public class UserController {
         User user = userService.findUserByID(id);
         user.setPassword("");
         model.addAttribute("user", user);
-        return "/backoffice/user/form";
+        return "backoffice/user/form";
     }
 
     @PostMapping("/update")
@@ -71,4 +73,17 @@ public class UserController {
         return "redirect:/backoffice/user/list";
     }
 
+    @GetMapping("/delete")
+    public String deleteStart(Model model, @RequestParam("id") Long id) throws BusinessException {
+        User user = userService.findUserByID(id);
+        user.setPassword("");
+        model.addAttribute("user", user);
+        return "backoffice/user/form";
+    }
+
+    @PostMapping("/delete")
+    public String delete(@ModelAttribute("user") User user) throws BusinessException, IOException {
+        userService.deleteUser(user);
+        return "redirect:/backoffice/user/list";
+    }
 }

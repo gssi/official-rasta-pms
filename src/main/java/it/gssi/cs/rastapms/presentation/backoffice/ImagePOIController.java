@@ -1,5 +1,6 @@
 package it.gssi.cs.rastapms.presentation.backoffice;
 
+import io.swagger.v3.oas.annotations.Hidden;
 import it.gssi.cs.rastapms.business.BusinessException;
 import it.gssi.cs.rastapms.business.POIService;
 import it.gssi.cs.rastapms.business.RequestGrid;
@@ -16,6 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 
+@Hidden
 @Controller
 @RequestMapping("backoffice/image")
 public class ImagePOIController {
@@ -29,7 +31,7 @@ public class ImagePOIController {
     @GetMapping("/list")
     public String list(@RequestParam("poiID") Long poiID, Model model) {
         model.addAttribute("poiID", poiID);
-        return "/backoffice/image/list";
+        return "backoffice/image/list";
     }
 
     @PostMapping("/findallpaginated")
@@ -46,7 +48,7 @@ public class ImagePOIController {
         image.setPoi(poi);
         model.addAttribute("image", image);
         model.addAttribute("imageadded", false);
-        return "/backoffice/image/form";
+        return "backoffice/image/form";
     }
 
     @PostMapping("/create")
@@ -62,7 +64,7 @@ public class ImagePOIController {
         Image image = service.findImageByID(id);
         model.addAttribute("image", image);
         model.addAttribute("imageadded", image.getContent().length != 0);
-        return "/backoffice/image/form";
+        return "backoffice/image/form";
     }
 
     @PostMapping("/update")
@@ -84,7 +86,7 @@ public class ImagePOIController {
         Image image = service.findImageByID(id);
         model.addAttribute("image", image);
         model.addAttribute("imageadded", image.getContent().length != 0);
-        return "/backoffice/image/form";
+        return "backoffice/image/form";
     }
 
     @PostMapping("/delete")

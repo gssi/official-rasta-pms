@@ -3,8 +3,12 @@ spring:
     url: jdbc:mysql://localhost:3306/rastapms
     username: rastapms
     password: rastapms
-    driver-class-name: com.mysql.cj.jdbc.Driver
-  
+
+  sql:
+    init:
+      mode: always
+      schema-locations: optional:classpath*:schema-mysql.sql
+
 ########################################################
 ################ RASTA PMS PROPERTIES ##################
 ########################################################

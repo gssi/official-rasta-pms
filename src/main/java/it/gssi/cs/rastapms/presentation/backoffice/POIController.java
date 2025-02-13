@@ -1,6 +1,7 @@
 package it.gssi.cs.rastapms.presentation.backoffice;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import io.swagger.v3.oas.annotations.Hidden;
 import it.gssi.cs.rastapms.business.BusinessException;
 import it.gssi.cs.rastapms.business.POIService;
 import it.gssi.cs.rastapms.business.RequestGrid;
@@ -16,6 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.List;
 
+@Hidden
 @Controller
 @RequestMapping("backoffice/poi")
 public class POIController {
@@ -28,7 +30,7 @@ public class POIController {
 
     @GetMapping("/list")
     public String list() {
-        return "/backoffice/poi/list";
+        return "backoffice/poi/list";
     }
 
     @JsonView(Views.POIPrivate.class)
@@ -45,7 +47,7 @@ public class POIController {
         poi.setPrimaryImage(primaryImage);
         model.addAttribute("poi", poi);
         model.addAttribute("primaryimageadded", false);
-        return "/backoffice/poi/form";
+        return "backoffice/poi/form";
     }
 
     @PostMapping("/create")
@@ -62,7 +64,7 @@ public class POIController {
         POI poi = poiService.findPointOfInterestByID(id);
         model.addAttribute("poi", poi);
         model.addAttribute("primaryimageadded", poi.getPrimaryImage().getContent().length != 0);
-        return "/backoffice/poi/form";
+        return "backoffice/poi/form";
     }
 
     @PostMapping("/update")
@@ -86,7 +88,7 @@ public class POIController {
         POI poi = poiService.findPointOfInterestByID(id);
         model.addAttribute("poi", poi);
         model.addAttribute("primaryimageadded", poi.getPrimaryImage().getContent().length != 0);
-        return "/backoffice/poi/form";
+        return "backoffice/poi/form";
     }
 
     @PostMapping("/delete")

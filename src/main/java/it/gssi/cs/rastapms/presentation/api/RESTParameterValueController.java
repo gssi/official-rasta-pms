@@ -1,6 +1,7 @@
 package it.gssi.cs.rastapms.presentation.api;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import it.gssi.cs.rastapms.business.BusinessException;
 import it.gssi.cs.rastapms.business.POIService;
 import it.gssi.cs.rastapms.business.impl.InfluxDBService;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+@Tag(name = "Point of interest parameters")
 @RestController
 @RequestMapping(value = "/api/v1/pois")
 public class RESTParameterValueController {

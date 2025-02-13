@@ -18,7 +18,7 @@ public class WebSecurityConfig {
 	public SecurityFilterChain securityFilterChain(HttpSecurity http, AuthenticationManager authenticationManager) throws Exception {
 		http.csrf(CsrfConfigurer::disable);
 		http.authorizeHttpRequests((authorize) -> authorize.requestMatchers("/", "/index", "/loginform").anonymous()
-				.requestMatchers("/i18n/**", "/dist/**", "/plugins/**", "/favicon.ico", "/maplibre/**", "/images/**", "/itineraries/**", "/pois/**").permitAll()
+				.requestMatchers("/i18n/**", "/dist/**", "/plugins/**", "/favicon.ico", "/maplibre/**", "/images/**", "/itineraries/**", "/pois/**", "/v3/**", "/swagger-ui/**").permitAll()
 				.requestMatchers("/backoffice/common/**").authenticated()
 				.requestMatchers("/backoffice/poi/**", "/backoffice/image/**", "/backoffice/itinerary/**", "/backoffice/user/**", "/backoffice/sensor/**", "/backoffice/sensorparameter/**").hasAnyRole("administrator"))
 				.formLogin((form) -> form.loginPage("/loginform").loginProcessingUrl("/login")

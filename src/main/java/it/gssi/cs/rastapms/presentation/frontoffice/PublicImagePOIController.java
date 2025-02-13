@@ -1,5 +1,6 @@
 package it.gssi.cs.rastapms.presentation.frontoffice;
 
+import io.swagger.v3.oas.annotations.Hidden;
 import it.gssi.cs.rastapms.business.BusinessException;
 import it.gssi.cs.rastapms.business.POIService;
 import it.gssi.cs.rastapms.domain.Image;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+@Hidden
 @Controller
 @RequestMapping("images")
 public class PublicImagePOIController {

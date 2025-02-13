@@ -61,5 +61,10 @@ public class JPAUserServiceImpl implements UserService {
         return userRepository.findById(id).get();
     }
 
+    @Override
+    public void deleteUser(User user) throws BusinessException {
+        userRepository.delete(user);
+    }
+
 
 }
