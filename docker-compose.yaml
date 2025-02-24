@@ -10,8 +10,8 @@ services:
       - spring.datasource.url=jdbc:mysql://mysqldb:3306/rastapms?allowPublicKeyRetrieval=true
       - spring.datasource.username=rastapms
       - spring.datasource.password=rastapms
-      - spring.init.mode=always
-      - spring.init.schema-locations=optional:classpath*:schema-mysql.sql
+      # - spring.init.mode=always
+      # - spring.init.schema-locations=optional:classpath*:schema-mysql.sql
     depends_on:
       - mysqldb    
 
@@ -30,5 +30,6 @@ services:
       MYSQL_ALLOW_EMPTY_PASSWORD: yes
     volumes:
       - dbdata:/var/lib/mysql
+      - ./init-scripts:/docker-entrypoint-initdb.d
 volumes:
   dbdata:

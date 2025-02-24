@@ -7,7 +7,7 @@ ENV LANGUAGE it_IT.UTF-8
 
 COPY src /home/app/src
 COPY pom.xml /home/app
-COPY database/rasta-pms.sql /home/app/src/main/resources/schema-mysql.sql
+# COPY database/rasta-pms.sql /home/app/src/main/resources/schema-mysql.sql
 RUN mvn -f /home/app/pom.xml clean package
 EXPOSE 8080
 ENTRYPOINT ["java","-jar","/home/app/target/rasta-pms.jar", "--spring.profiles.active=prod"]
