@@ -58,7 +58,7 @@ public class PublicItineraryController {
     public String poiDetail(Model model, @RequestParam("id") Long id) throws BusinessException {
         Itinerary itinerary = itineraryService.findItineraryByID(id);
         model.addAttribute("itinerary", itinerary);
-        return "/frontoffice/itinerary/detail";
+        return "frontoffice/itinerary/detail";
     }
 
     @GetMapping("/getimage")

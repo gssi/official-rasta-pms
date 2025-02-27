@@ -4,11 +4,6 @@ spring:
     username: rastapms
     password: rastapms
 
-  sql:
-    init:
-      mode: always
-      schema-locations: optional:classpath*:schema-mysql.sql
-
 ########################################################
 ################ RASTA PMS PROPERTIES ##################
 ########################################################

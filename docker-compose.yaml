@@ -7,18 +7,23 @@ services:
     ports:
       - 8080:8080
     environment:
-      - spring.datasource.url=jdbc:mysql://mysqldb:3306/rastapms?allowPublicKeyRetrieval=true
+      - spring.datasource.url=jdbc:mysql://mysql-db:3306/rastapms?allowPublicKeyRetrieval=true
       - spring.datasource.username=rastapms
       - spring.datasource.password=rastapms
+      - rastapms.influxdbURL=http://4.232.74.35/api/v2/query
+      - rastapms.orgID=fbf2d6df51c7f934
+      - rastapms.authorizationtoken=QBmhrJfmainhMOuh3T4S7i5UavyIGQif8xgRkFqScXnuuxZPep7NAwBg1_rQAGrTslOeYx4bJFkpHQ5uK-Bbbg==
+      - rastapms.medescription=http://localhost:9090/rastame/api/metadataenricher/description
+      - rastapms.mecategories=http://localhost:9090/rastame/api/metadataenricher/categories
       # - spring.init.mode=always
       # - spring.init.schema-locations=optional:classpath*:schema-mysql.sql
     depends_on:
-      - mysqldb    
+      - mysql-db
 
       
-  mysqldb:
+  mysql-db:
     image: "mysql:8.0"
-    container_name: db
+    container_name: mysql-db
     restart: always    
     ports:
       - 3306:3306
@@ -28,8 +33,13 @@ services:
       MYSQL_PASSWORD: rastapms
       MYSQL_ROOT_PASSWORD: 
       MYSQL_ALLOW_EMPTY_PASSWORD: yes
+      MYSQL_CHARSET: utf8mb4
+      MYSQL_COLLATION: utf8mb4_unicode_ci
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+
     volumes:
       - dbdata:/var/lib/mysql
       - ./init-scripts:/docker-entrypoint-initdb.d
+      - ./my.cnf:/etc/mysql/my.cnf
 volumes:
   dbdata:
