@@ -25,7 +25,6 @@ public class InfluxDBService {
         UriComponents uriComponents = UriComponentsBuilder.fromUriString(properties.getInfluxdbURL())
                 .queryParam("orgID", properties.getOrgID())
                 .build();
-        System.out.println(parameter.getName());
         Sensor sensor = parameter.getSensor();
         StringBuilder sb = new StringBuilder();
         sb.append("from(bucket: \"" + properties.getBucket() + "\")\n");
