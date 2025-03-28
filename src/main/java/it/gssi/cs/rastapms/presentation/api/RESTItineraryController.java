@@ -18,6 +18,7 @@ import java.util.Set;
 @Tag(name = "Itinerary")
 @RestController
 @RequestMapping(value = "/api/v1/itineraries")
+@CrossOrigin
 public class RESTItineraryController {
 
     private ItineraryService itineraryService;

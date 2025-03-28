@@ -19,6 +19,7 @@ import java.util.Set;
 @Tag(name = "Point of interest")
 @RestController
 @RequestMapping(value = "/api/v1/pois")
+@CrossOrigin
 public class RESTPOIController {
 
     private POIService poiService;

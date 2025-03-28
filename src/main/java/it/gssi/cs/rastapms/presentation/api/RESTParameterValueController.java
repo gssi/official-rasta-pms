@@ -7,16 +7,14 @@ import it.gssi.cs.rastapms.business.POIService;
 import it.gssi.cs.rastapms.business.impl.InfluxDBService;
 import it.gssi.cs.rastapms.domain.Parameter;
 import it.gssi.cs.rastapms.domain.Views;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @Tag(name = "Point of interest parameters")
 @RestController
 @RequestMapping(value = "/api/v1/pois")
+@CrossOrigin
 public class RESTParameterValueController {
     private POIService poiService;
     private InfluxDBService influxDBService;
