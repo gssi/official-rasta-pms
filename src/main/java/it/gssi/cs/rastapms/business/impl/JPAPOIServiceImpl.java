@@ -66,7 +66,7 @@ public class JPAPOIServiceImpl implements POIService {
     public POI findPointOfInterestByIDWithAugmentedDescription(Long id) throws BusinessException {
         POI poi = poiRepository.findById(id).get();
         String description = poi.getDescription();
-        List<Parameter> parameters = extractParameters(description);
+        List<Parameter> parameters = extractParameters(description, id);
         for (Parameter parameter : parameters) {
             ParameterValue parameterValue = influxDBService.getParameterValue(parameter);
             String descriptionParameterValue = createDescriptionParameterValue(parameterValue);
@@ -102,7 +102,7 @@ public class JPAPOIServiceImpl implements POIService {
 
     }
 
-    private List<Parameter> extractParameters(String description) {
+    private List<Parameter> extractParameters(String description, Long poiID) {
         List<Parameter> result = new ArrayList<>();
         boolean openParameterDefinition = false;
         StringBuilder parameterDefinition = new StringBuilder();
@@ -113,10 +113,11 @@ public class JPAPOIServiceImpl implements POIService {
             }
             if ("]".equalsIgnoreCase(String.valueOf(c))) {
                 openParameterDefinition = false;
-                String sensor = parameterDefinition.substring(1, parameterDefinition.indexOf("!"));
+                String sensorName = parameterDefinition.substring(1, parameterDefinition.indexOf("!"));
                 String parameterName = parameterDefinition.substring(parameterDefinition.indexOf("!") + 1);
-                Parameter parameter = parameterRepository.findParameterByName(parameterName);
-                if (sensor.equals(parameter.getSensor().getName())) {
+                Sensor sensor = sensorRepository.findByPoiIDAndName(poiID, sensorName);
+                Parameter parameter = parameterRepository.findBySensorIDAndName(sensor.getId(), parameterName);
+                if (sensorName.equals(parameter.getSensor().getName())) {
                     result.add(parameter);
                 }
                 parameterDefinition = new StringBuilder();
@@ -217,6 +218,8 @@ public class JPAPOIServiceImpl implements POIService {
 
     @Override
     public void deleteSensor(Sensor sensor) throws BusinessException {
+        List<Parameter> parameters = parameterRepository.findParametersBySensorId(sensor.getId());
+        parameterRepository.deleteAll(parameters);
         sensorRepository.delete(sensor);
     }
 

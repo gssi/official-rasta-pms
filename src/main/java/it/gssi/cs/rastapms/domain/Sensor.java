@@ -40,12 +40,6 @@ public class Sensor {
     @NotNull(message = "point of interest is mandatory")
     private POI poi;
 
-    //@ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.EAGER)
-    @ManyToMany()
-    @JoinTable(name = "sensors_parameters", joinColumns = {@JoinColumn(name = "sensor_id")}, inverseJoinColumns = {
-            @JoinColumn(name = "parameter_id")})
-    private Set<Parameter> parameters = new HashSet<>();
-
     public Long getId() {
         return id;
     }
@@ -110,11 +104,4 @@ public class Sensor {
         this.poi = poi;
     }
 
-    public Set<Parameter> getParameters() {
-        return parameters;
-    }
-
-    public void setParameters(Set<Parameter> parameters) {
-        this.parameters = parameters;
-    }
 }
